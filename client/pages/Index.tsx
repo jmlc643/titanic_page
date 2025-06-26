@@ -71,123 +71,136 @@ export default function Index() {
   };
 
   const makePrediction = async (): Promise<PredictionResult> => {
+    // Validate form data first
+    const validFormData = {
+      ...formData,
+      age: isNaN(formData.age) ? 25 : formData.age,
+      fare: isNaN(formData.fare) ? 50 : formData.fare,
+      sibsp: isNaN(formData.sibsp) ? 0 : formData.sibsp,
+      parch: isNaN(formData.parch) ? 0 : formData.parch,
+      pclass: isNaN(formData.pclass) ? 3 : formData.pclass,
+    };
+
+    // Try API call with timeout and error handling
     const API_BASE_URL = "https://titanic-model-o1yt.onrender.com";
+    let useApiResult = false;
+    let backendResult: BackendPredictionResponse | null = null;
 
     try {
-      // Validate form data before sending
-      const validFormData = {
-        ...formData,
-        age: isNaN(formData.age) ? 25 : formData.age,
-        fare: isNaN(formData.fare) ? 50 : formData.fare,
-        sibsp: isNaN(formData.sibsp) ? 0 : formData.sibsp,
-        parch: isNaN(formData.parch) ? 0 : formData.parch,
-        pclass: isNaN(formData.pclass) ? 3 : formData.pclass,
-      };
+      console.log("Attempting API call with data:", validFormData);
 
-      console.log("Sending prediction request with data:", validFormData);
+      // Create a timeout promise
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error("Request timeout")), 10000),
+      );
 
-      // Call the real backend API
-      const response = await fetch(`${API_BASE_URL}/predict`, {
+      // Create the fetch promise
+      const fetchPromise = fetch(`${API_BASE_URL}/predict`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json",
         },
         body: JSON.stringify(validFormData),
+        mode: "cors",
       });
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(
-          `API Error: ${response.status} ${response.statusText} - ${errorText}`,
-        );
+      // Race between fetch and timeout
+      const response = (await Promise.race([
+        fetchPromise,
+        timeoutPromise,
+      ])) as Response;
+
+      if (response.ok) {
+        backendResult = await response.json();
+        useApiResult = true;
+        console.log("✅ API Success:", backendResult);
+      } else {
+        console.log("❌ API Error:", response.status, response.statusText);
       }
+    } catch (error) {
+      console.log(
+        "⚠️ API Unavailable - using local prediction:",
+        error.message,
+      );
+    }
 
-      const backendResult: BackendPredictionResponse = await response.json();
-      console.log("Backend response:", backendResult);
-
-      // Calculate confidence based on prediction certainty
-      // Since we don't get confidence from backend, we'll estimate it
+    // If API worked, use its result
+    if (useApiResult && backendResult) {
       const confidence =
         backendResult.prediction === 1
           ? Math.floor(Math.random() * 20) + 75 // 75-95% for survival
           : Math.floor(Math.random() * 20) + 70; // 70-90% for no survival
 
-      // Create enhanced result for frontend
-      const result: PredictionResult = {
+      return {
         survived: backendResult.prediction === 1,
         confidence,
         survivedText: backendResult.survived,
         features: [
-          { name: "Gender", value: formData.sex, importance: 0.35 },
-          { name: "Passenger Class", value: formData.pclass, importance: 0.25 },
-          { name: "Age", value: formData.age, importance: 0.15 },
-          { name: "Fare", value: `$${formData.fare}`, importance: 0.1 },
+          { name: "Gender", value: validFormData.sex, importance: 0.35 },
+          {
+            name: "Passenger Class",
+            value: validFormData.pclass,
+            importance: 0.25,
+          },
+          { name: "Age", value: validFormData.age, importance: 0.15 },
+          { name: "Fare", value: `$${validFormData.fare}`, importance: 0.1 },
           {
             name: "Family Size",
-            value: formData.sibsp + formData.parch,
+            value: validFormData.sibsp + validFormData.parch,
             importance: 0.1,
           },
           {
             name: "Port of Embarkation",
-            value: formData.embarked,
-            importance: 0.05,
-          },
-        ],
-      };
-
-      return result;
-    } catch (error) {
-      console.error("Prediction API Error:", error);
-
-      // Check if it's a CORS or network error
-      if (
-        error instanceof TypeError &&
-        error.message.includes("Failed to fetch")
-      ) {
-        console.warn(
-          "CORS or network error detected. Using fallback prediction.",
-        );
-      }
-
-      // Fallback to local estimation if API fails
-      let survivalProbability = 0.5;
-      if (formData.sex === "female") survivalProbability += 0.35;
-      if (formData.pclass === 1) survivalProbability += 0.25;
-      else if (formData.pclass === 2) survivalProbability += 0.1;
-      if (formData.age < 16) survivalProbability += 0.15;
-      if (formData.fare > 50) survivalProbability += 0.1;
-      if (
-        formData.sibsp + formData.parch > 0 &&
-        formData.sibsp + formData.parch < 4
-      )
-        survivalProbability += 0.05;
-
-      survivalProbability = Math.max(0.1, Math.min(0.9, survivalProbability));
-      const survived = survivalProbability > 0.5;
-
-      return {
-        survived,
-        confidence: Math.round(survivalProbability * 100),
-        survivedText: survived ? "Sí" : "No",
-        features: [
-          { name: "Gender", value: formData.sex, importance: 0.35 },
-          { name: "Passenger Class", value: formData.pclass, importance: 0.25 },
-          { name: "Age", value: formData.age, importance: 0.15 },
-          { name: "Fare", value: `$${formData.fare}`, importance: 0.1 },
-          {
-            name: "Family Size",
-            value: formData.sibsp + formData.parch,
-            importance: 0.1,
-          },
-          {
-            name: "Port of Embarkation",
-            value: formData.embarked,
+            value: validFormData.embarked,
             importance: 0.05,
           },
         ],
       };
     }
+
+    // Fallback: Use local prediction algorithm
+    console.log("🔄 Using local prediction algorithm");
+    let survivalProbability = 0.5;
+    if (validFormData.sex === "female") survivalProbability += 0.35;
+    if (validFormData.pclass === 1) survivalProbability += 0.25;
+    else if (validFormData.pclass === 2) survivalProbability += 0.1;
+    if (validFormData.age < 16) survivalProbability += 0.15;
+    if (validFormData.fare > 50) survivalProbability += 0.1;
+    if (
+      validFormData.sibsp + validFormData.parch > 0 &&
+      validFormData.sibsp + validFormData.parch < 4
+    )
+      survivalProbability += 0.05;
+
+    survivalProbability = Math.max(0.1, Math.min(0.9, survivalProbability));
+    const survived = survivalProbability > 0.5;
+
+    return {
+      survived,
+      confidence: Math.round(survivalProbability * 100),
+      survivedText: survived ? "Sí" : "No",
+      features: [
+        { name: "Gender", value: validFormData.sex, importance: 0.35 },
+        {
+          name: "Passenger Class",
+          value: validFormData.pclass,
+          importance: 0.25,
+        },
+        { name: "Age", value: validFormData.age, importance: 0.15 },
+        { name: "Fare", value: `$${validFormData.fare}`, importance: 0.1 },
+        {
+          name: "Family Size",
+          value: validFormData.sibsp + validFormData.parch,
+          importance: 0.1,
+        },
+        {
+          name: "Port of Embarkation",
+          value: validFormData.embarked,
+          importance: 0.05,
+        },
+      ],
+    };
   };
 
   const handlePredict = async () => {
@@ -201,16 +214,10 @@ export default function Index() {
       const result = await makePrediction();
       setPrediction(result);
     } catch (error) {
-      console.error("Prediction error:", error);
-
-      // Check if it's a network/CORS error
-      const isNetworkError =
-        error instanceof TypeError && error.message.includes("Failed to fetch");
-      const errorMessage = isNetworkError
-        ? "No se pudo conectar con el servidor. Usando predicción local como respaldo."
-        : "Error al hacer la predicción. Por favor, intenta de nuevo.";
-
-      alert(errorMessage);
+      console.error("Unexpected prediction error:", error);
+      alert(
+        "Error inesperado al procesar la predicción. Por favor, intenta de nuevo.",
+      );
     } finally {
       setIsLoading(false);
     }
@@ -369,8 +376,8 @@ export default function Index() {
               entrenado
             </p>
             <div className="mt-4 flex items-center justify-center space-x-2 text-blue-300 dark:text-blue-400">
-              <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-              <span className="text-sm">Conectado al modelo ML en vivo</span>
+              <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
+              <span className="text-sm">Modelo ML híbrido (API + Local)</span>
             </div>
           </div>
 
