@@ -271,25 +271,30 @@ export default function Index() {
 
           <div className="max-w-4xl mx-auto grid lg:grid-cols-2 gap-8">
             {/* Input Form */}
-            <Card className="p-6">
+            <Card className="p-6 bg-white dark:bg-slate-800 border-white dark:border-slate-700">
               <CardHeader>
                 <CardTitle className="text-2xl text-blue-900 dark:text-blue-100 flex items-center">
                   <Users className="mr-2 h-6 w-6" />
                   Passenger Information
                 </CardTitle>
-                <CardDescription>
+                <CardDescription className="text-gray-600 dark:text-gray-300">
                   Fill in the passenger details for prediction
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="sex">Gender *</Label>
+                    <Label
+                      htmlFor="sex"
+                      className="text-gray-700 dark:text-gray-200"
+                    >
+                      Gender *
+                    </Label>
                     <Select
                       value={formData.sex}
                       onValueChange={(value) => handleInputChange("sex", value)}
                     >
-                      <SelectTrigger>
+                      <SelectTrigger className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600 text-gray-900 dark:text-white">
                         <SelectValue placeholder="Select gender" />
                       </SelectTrigger>
                       <SelectContent>
@@ -300,14 +305,19 @@ export default function Index() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="pclass">Passenger Class *</Label>
+                    <Label
+                      htmlFor="pclass"
+                      className="text-gray-700 dark:text-gray-200"
+                    >
+                      Passenger Class *
+                    </Label>
                     <Select
                       value={formData.pclass.toString()}
                       onValueChange={(value) =>
                         handleInputChange("pclass", parseInt(value))
                       }
                     >
-                      <SelectTrigger>
+                      <SelectTrigger className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600 text-gray-900 dark:text-white">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -321,7 +331,12 @@ export default function Index() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="age">Age</Label>
+                    <Label
+                      htmlFor="age"
+                      className="text-gray-700 dark:text-gray-200"
+                    >
+                      Age
+                    </Label>
                     <Input
                       id="age"
                       type="number"
@@ -331,11 +346,17 @@ export default function Index() {
                       }
                       min="0"
                       max="120"
+                      className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600 text-gray-900 dark:text-white"
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="fare">Fare ($)</Label>
+                    <Label
+                      htmlFor="fare"
+                      className="text-gray-700 dark:text-gray-200"
+                    >
+                      Fare ($)
+                    </Label>
                     <Input
                       id="fare"
                       type="number"
@@ -345,13 +366,19 @@ export default function Index() {
                       }
                       min="0"
                       step="0.01"
+                      className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600 text-gray-900 dark:text-white"
                     />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="sibsp">Siblings/Spouses</Label>
+                    <Label
+                      htmlFor="sibsp"
+                      className="text-gray-700 dark:text-gray-200"
+                    >
+                      Siblings/Spouses
+                    </Label>
                     <Input
                       id="sibsp"
                       type="number"
@@ -361,11 +388,17 @@ export default function Index() {
                       }
                       min="0"
                       max="10"
+                      className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600 text-gray-900 dark:text-white"
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="parch">Parents/Children</Label>
+                    <Label
+                      htmlFor="parch"
+                      className="text-gray-700 dark:text-gray-200"
+                    >
+                      Parents/Children
+                    </Label>
                     <Input
                       id="parch"
                       type="number"
@@ -375,19 +408,25 @@ export default function Index() {
                       }
                       min="0"
                       max="10"
+                      className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600 text-gray-900 dark:text-white"
                     />
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="embarked">Port of Embarkation *</Label>
+                  <Label
+                    htmlFor="embarked"
+                    className="text-gray-700 dark:text-gray-200"
+                  >
+                    Port of Embarkation *
+                  </Label>
                   <Select
                     value={formData.embarked}
                     onValueChange={(value) =>
                       handleInputChange("embarked", value)
                     }
                   >
-                    <SelectTrigger>
+                    <SelectTrigger className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600 text-gray-900 dark:text-white">
                       <SelectValue placeholder="Select port" />
                     </SelectTrigger>
                     <SelectContent>
@@ -406,7 +445,12 @@ export default function Index() {
                       handleInputChange("alone", checked)
                     }
                   />
-                  <Label htmlFor="alone">Traveling alone</Label>
+                  <Label
+                    htmlFor="alone"
+                    className="text-gray-700 dark:text-gray-200"
+                  >
+                    Traveling alone
+                  </Label>
                 </div>
 
                 <Button
@@ -422,13 +466,15 @@ export default function Index() {
             </Card>
 
             {/* Results */}
-            <Card className="p-6">
+            <Card className="p-6 bg-white dark:bg-slate-800 border-white dark:border-slate-700">
               <CardHeader>
                 <CardTitle className="text-2xl text-blue-900 dark:text-blue-100 flex items-center">
                   <TrendingUp className="mr-2 h-6 w-6" />
                   Prediction Results
                 </CardTitle>
-                <CardDescription>AI-powered survival analysis</CardDescription>
+                <CardDescription className="text-gray-600 dark:text-gray-300">
+                  AI-powered survival analysis
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 {isLoading ? (
