@@ -213,7 +213,7 @@ export default function Index() {
                 <CardTitle className="text-blue-900 dark:text-blue-100">
                   Machine Learning
                 </CardTitle>
-                <CardDescription>
+                <CardDescription className="text-gray-600 dark:text-gray-300">
                   Advanced Decision Tree algorithm trained on historical Titanic
                   passenger data
                 </CardDescription>
@@ -228,7 +228,7 @@ export default function Index() {
                 <CardTitle className="text-blue-900 dark:text-blue-100">
                   Historical Data
                 </CardTitle>
-                <CardDescription>
+                <CardDescription className="text-gray-600 dark:text-gray-300">
                   Based on real passenger manifest data from the RMS Titanic
                   voyage
                 </CardDescription>
@@ -243,7 +243,7 @@ export default function Index() {
                 <CardTitle className="text-blue-900 dark:text-blue-100">
                   Interactive
                 </CardTitle>
-                <CardDescription>
+                <CardDescription className="text-gray-600 dark:text-gray-300">
                   Real-time predictions with detailed feature importance
                   analysis
                 </CardDescription>
