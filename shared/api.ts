@@ -26,11 +26,20 @@ export interface PassengerData {
 }
 
 /**
- * Prediction result from the decision tree model
+ * Prediction result from the backend API
+ */
+export interface BackendPredictionResponse {
+  prediction: number;
+  survived: string;
+}
+
+/**
+ * Enhanced prediction result for frontend display
  */
 export interface PredictionResult {
   survived: boolean;
   confidence: number;
+  survivedText: string;
   features: {
     name: string;
     value: string | number | boolean;
