@@ -26,9 +26,14 @@ import {
   TrendingUp,
   AlertTriangle,
   CheckCircle,
+  Moon,
+  Sun,
 } from "lucide-react";
+import { useDarkMode } from "@/hooks/use-dark-mode";
 
 export default function Index() {
+  const { isDark, toggleDarkMode } = useDarkMode();
+
   const [formData, setFormData] = useState<PassengerData>({
     pclass: 3,
     sex: "",
@@ -118,9 +123,9 @@ export default function Index() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 via-white to-blue-50">
+    <div className="min-h-screen bg-gradient-to-b from-blue-50 via-white to-blue-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
       {/* Navigation */}
-      <nav className="fixed top-0 w-full bg-white/80 backdrop-blur-md border-b border-blue-100 z-50">
+      <nav className="fixed top-0 w-full bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-blue-100 dark:border-slate-700 z-50">
         <div className="container mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
@@ -129,19 +134,31 @@ export default function Index() {
                 Titanic Predictor
               </span>
             </div>
-            <div className="flex space-x-6">
+            <div className="flex items-center space-x-6">
               <a
                 href="#home"
-                className="text-blue-700 hover:text-blue-900 transition-colors"
+                className="text-blue-700 hover:text-blue-900 dark:text-blue-300 dark:hover:text-blue-100 transition-colors"
               >
                 Home
               </a>
               <a
                 href="#predictor"
-                className="text-blue-700 hover:text-blue-900 transition-colors"
+                className="text-blue-700 hover:text-blue-900 dark:text-blue-300 dark:hover:text-blue-100 transition-colors"
               >
                 Predictor
               </a>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={toggleDarkMode}
+                className="ml-2 hover:bg-blue-100 dark:hover:bg-blue-800"
+              >
+                {isDark ? (
+                  <Sun className="h-5 w-5 text-blue-700 dark:text-blue-300" />
+                ) : (
+                  <Moon className="h-5 w-5 text-blue-700" />
+                )}
+              </Button>
             </div>
           </div>
         </div>
@@ -154,11 +171,13 @@ export default function Index() {
             <div className="mb-8">
               <Ship className="h-20 w-20 text-blue-600 mx-auto mb-6" />
             </div>
-            <h1 className="text-5xl md:text-7xl font-bold text-blue-900 mb-6">
+            <h1 className="text-5xl md:text-7xl font-bold text-blue-900 dark:text-blue-100 mb-6">
               Titanic Survival
-              <span className="block text-blue-600">Predictor</span>
+              <span className="block text-blue-600 dark:text-blue-400">
+                Predictor
+              </span>
             </h1>
-            <p className="text-xl text-blue-700 mb-8 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-xl text-blue-700 dark:text-blue-300 mb-8 max-w-3xl mx-auto leading-relaxed">
               Discover the power of machine learning with our Decision Tree
               model trained on the historic Titanic dataset. Input passenger
               information and predict survival chances based on historical
@@ -186,12 +205,12 @@ export default function Index() {
 
           {/* Features Grid */}
           <div className="grid md:grid-cols-3 gap-8 mt-20">
-            <Card className="text-center border-blue-200 hover:shadow-lg transition-shadow">
+            <Card className="text-center border-blue-200 dark:border-slate-600 hover:shadow-lg transition-shadow">
               <CardHeader>
-                <div className="mx-auto w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-4">
-                  <TrendingUp className="h-6 w-6 text-blue-600" />
+                <div className="mx-auto w-12 h-12 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center mb-4">
+                  <TrendingUp className="h-6 w-6 text-blue-600 dark:text-blue-400" />
                 </div>
-                <CardTitle className="text-blue-900">
+                <CardTitle className="text-blue-900 dark:text-blue-100">
                   Machine Learning
                 </CardTitle>
                 <CardDescription>
@@ -201,12 +220,14 @@ export default function Index() {
               </CardHeader>
             </Card>
 
-            <Card className="text-center border-blue-200 hover:shadow-lg transition-shadow">
+            <Card className="text-center border-blue-200 dark:border-slate-600 hover:shadow-lg transition-shadow">
               <CardHeader>
-                <div className="mx-auto w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-4">
-                  <Users className="h-6 w-6 text-blue-600" />
+                <div className="mx-auto w-12 h-12 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center mb-4">
+                  <Users className="h-6 w-6 text-blue-600 dark:text-blue-400" />
                 </div>
-                <CardTitle className="text-blue-900">Historical Data</CardTitle>
+                <CardTitle className="text-blue-900 dark:text-blue-100">
+                  Historical Data
+                </CardTitle>
                 <CardDescription>
                   Based on real passenger manifest data from the RMS Titanic
                   voyage
@@ -214,12 +235,14 @@ export default function Index() {
               </CardHeader>
             </Card>
 
-            <Card className="text-center border-blue-200 hover:shadow-lg transition-shadow">
+            <Card className="text-center border-blue-200 dark:border-slate-600 hover:shadow-lg transition-shadow">
               <CardHeader>
-                <div className="mx-auto w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-4">
-                  <Ship className="h-6 w-6 text-blue-600" />
+                <div className="mx-auto w-12 h-12 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center mb-4">
+                  <Ship className="h-6 w-6 text-blue-600 dark:text-blue-400" />
                 </div>
-                <CardTitle className="text-blue-900">Interactive</CardTitle>
+                <CardTitle className="text-blue-900 dark:text-blue-100">
+                  Interactive
+                </CardTitle>
                 <CardDescription>
                   Real-time predictions with detailed feature importance
                   analysis
@@ -233,14 +256,14 @@ export default function Index() {
       {/* Predictor Section */}
       <section
         id="predictor"
-        className="py-20 bg-gradient-to-r from-blue-900 via-blue-800 to-blue-900"
+        className="py-20 bg-gradient-to-r from-blue-900 via-blue-800 to-blue-900 dark:from-slate-800 dark:via-slate-900 dark:to-slate-800"
       >
         <div className="container mx-auto px-6">
           <div className="text-center mb-12">
-            <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
+            <h2 className="text-4xl md:text-5xl font-bold text-white dark:text-blue-100 mb-4">
               Survival Predictor
             </h2>
-            <p className="text-blue-200 text-lg max-w-2xl mx-auto">
+            <p className="text-blue-200 dark:text-blue-300 text-lg max-w-2xl mx-auto">
               Enter passenger details to get a survival prediction based on our
               Decision Tree model
             </p>
@@ -250,7 +273,7 @@ export default function Index() {
             {/* Input Form */}
             <Card className="p-6">
               <CardHeader>
-                <CardTitle className="text-2xl text-blue-900 flex items-center">
+                <CardTitle className="text-2xl text-blue-900 dark:text-blue-100 flex items-center">
                   <Users className="mr-2 h-6 w-6" />
                   Passenger Information
                 </CardTitle>
@@ -401,7 +424,7 @@ export default function Index() {
             {/* Results */}
             <Card className="p-6">
               <CardHeader>
-                <CardTitle className="text-2xl text-blue-900 flex items-center">
+                <CardTitle className="text-2xl text-blue-900 dark:text-blue-100 flex items-center">
                   <TrendingUp className="mr-2 h-6 w-6" />
                   Prediction Results
                 </CardTitle>
@@ -415,21 +438,23 @@ export default function Index() {
                 ) : prediction ? (
                   <div className="space-y-6">
                     {/* Main Result */}
-                    <div className="text-center p-6 rounded-lg bg-gradient-to-r from-blue-50 to-blue-100">
+                    <div className="text-center p-6 rounded-lg bg-gradient-to-r from-blue-50 to-blue-100 dark:from-slate-800 dark:to-slate-700">
                       <div className="flex items-center justify-center mb-4">
                         {prediction.survived ? (
-                          <CheckCircle className="h-16 w-16 text-green-600" />
+                          <CheckCircle className="h-16 w-16 text-green-600 dark:text-green-400" />
                         ) : (
-                          <AlertTriangle className="h-16 w-16 text-red-600" />
+                          <AlertTriangle className="h-16 w-16 text-red-600 dark:text-red-400" />
                         )}
                       </div>
-                      <h3 className="text-2xl font-bold text-blue-900 mb-2">
+                      <h3 className="text-2xl font-bold text-blue-900 dark:text-blue-100 mb-2">
                         {prediction.survived
                           ? "Likely Survived"
                           : "Likely Did Not Survive"}
                       </h3>
                       <div className="flex items-center justify-center space-x-2">
-                        <span className="text-blue-700">Confidence:</span>
+                        <span className="text-blue-700 dark:text-blue-300">
+                          Confidence:
+                        </span>
                         <Badge
                           variant={
                             prediction.confidence > 70 ? "default" : "secondary"
@@ -443,7 +468,7 @@ export default function Index() {
 
                     {/* Feature Importance */}
                     <div>
-                      <h4 className="font-semibold text-blue-900 mb-4">
+                      <h4 className="font-semibold text-blue-900 dark:text-blue-100 mb-4">
                         Feature Importance
                       </h4>
                       <div className="space-y-3">
@@ -454,16 +479,16 @@ export default function Index() {
                           >
                             <div className="flex-1">
                               <div className="flex justify-between items-center mb-1">
-                                <span className="text-sm font-medium text-blue-800">
+                                <span className="text-sm font-medium text-blue-800 dark:text-blue-200">
                                   {feature.name}
                                 </span>
-                                <span className="text-sm text-blue-600">
+                                <span className="text-sm text-blue-600 dark:text-blue-400">
                                   {feature.value}
                                 </span>
                               </div>
-                              <div className="w-full bg-blue-100 rounded-full h-2">
+                              <div className="w-full bg-blue-100 dark:bg-slate-700 rounded-full h-2">
                                 <div
-                                  className="bg-blue-600 h-2 rounded-full transition-all duration-500"
+                                  className="bg-blue-600 dark:bg-blue-500 h-2 rounded-full transition-all duration-500"
                                   style={{
                                     width: `${feature.importance * 100}%`,
                                   }}
@@ -476,7 +501,7 @@ export default function Index() {
                     </div>
                   </div>
                 ) : (
-                  <div className="text-center py-12 text-blue-600">
+                  <div className="text-center py-12 text-blue-600 dark:text-blue-400">
                     <Ship className="h-16 w-16 mx-auto mb-4 opacity-50" />
                     <p>
                       Enter passenger details and click "Predict Survival" to
@@ -491,16 +516,16 @@ export default function Index() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-blue-900 text-white py-12">
+      <footer className="bg-blue-900 dark:bg-slate-900 text-white py-12">
         <div className="container mx-auto px-6 text-center">
           <div className="flex items-center justify-center space-x-2 mb-4">
             <Ship className="h-8 w-8" />
             <span className="text-xl font-bold">Titanic Predictor</span>
           </div>
-          <p className="text-blue-200 mb-4">
+          <p className="text-blue-200 dark:text-blue-300 mb-4">
             Machine Learning demonstration using the Titanic dataset
           </p>
-          <p className="text-blue-300 text-sm">
+          <p className="text-blue-300 dark:text-blue-400 text-sm">
             Built with React, TypeScript, and Decision Tree algorithms
           </p>
         </div>

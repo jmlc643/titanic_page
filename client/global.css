@@ -4,6 +4,39 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* Dark mode theme variables */
+@theme {
+  --color-dark-ocean-deep: 210 95% 8%;
+  --color-dark-ocean-blue: 200 80% 35%;
+  --color-dark-ocean-light: 190 40% 25%;
+  --color-dark-ice-white: 210 15% 95%;
+  --color-dark-steel: 210 15% 65%;
+  --color-dark-gold: 45 85% 60%;
+  --color-dark-background: 210 20% 12%;
+  --color-dark-card: 210 15% 15%;
+}
+
+/* Dark mode color overrides */
+:where(.dark, .dark *) {
+  --color-background: var(--color-dark-background);
+  --color-foreground: var(--color-dark-ice-white);
+  --color-card: var(--color-dark-card);
+  --color-card-foreground: var(--color-dark-ice-white);
+  --color-popover: var(--color-dark-card);
+  --color-popover-foreground: var(--color-dark-ice-white);
+  --color-primary: var(--color-dark-ocean-blue);
+  --color-primary-foreground: var(--color-dark-ice-white);
+  --color-secondary: var(--color-dark-ocean-light);
+  --color-secondary-foreground: var(--color-dark-ice-white);
+  --color-muted: var(--color-dark-ocean-light);
+  --color-muted-foreground: var(--color-dark-steel);
+  --color-accent: var(--color-dark-gold);
+  --color-accent-foreground: var(--color-dark-background);
+  --color-border: var(--color-dark-ocean-light);
+  --color-input: var(--color-dark-ocean-light);
+  --color-ring: var(--color-dark-ocean-blue);
+}
+
 /* TailwindV4 theme and design tokens */
 @theme {
   /* Fonts */
