@@ -53,9 +53,20 @@ export default function Index() {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleInputChange = (field: keyof PassengerData, value: any) => {
+    let processedValue = value;
+
+    // Handle numeric fields to prevent NaN values
+    if (field === "age" || field === "fare") {
+      const numValue = parseFloat(value);
+      processedValue = isNaN(numValue) ? 0 : numValue;
+    } else if (field === "sibsp" || field === "parch" || field === "pclass") {
+      const intValue = parseInt(value);
+      processedValue = isNaN(intValue) ? 0 : intValue;
+    }
+
     setFormData((prev) => ({
       ...prev,
-      [field]: value,
+      [field]: processedValue,
     }));
   };
 
@@ -63,20 +74,37 @@ export default function Index() {
     const API_BASE_URL = "https://titanic-model-o1yt.onrender.com";
 
     try {
+      // Validate form data before sending
+      const validFormData = {
+        ...formData,
+        age: isNaN(formData.age) ? 25 : formData.age,
+        fare: isNaN(formData.fare) ? 50 : formData.fare,
+        sibsp: isNaN(formData.sibsp) ? 0 : formData.sibsp,
+        parch: isNaN(formData.parch) ? 0 : formData.parch,
+        pclass: isNaN(formData.pclass) ? 3 : formData.pclass,
+      };
+
+      console.log("Sending prediction request with data:", validFormData);
+
       // Call the real backend API
       const response = await fetch(`${API_BASE_URL}/predict`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Accept: "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(validFormData),
       });
 
       if (!response.ok) {
-        throw new Error(`API Error: ${response.status} ${response.statusText}`);
+        const errorText = await response.text();
+        throw new Error(
+          `API Error: ${response.status} ${response.statusText} - ${errorText}`,
+        );
       }
 
       const backendResult: BackendPredictionResponse = await response.json();
+      console.log("Backend response:", backendResult);
 
       // Calculate confidence based on prediction certainty
       // Since we don't get confidence from backend, we'll estimate it
@@ -111,6 +139,16 @@ export default function Index() {
       return result;
     } catch (error) {
       console.error("Prediction API Error:", error);
+
+      // Check if it's a CORS or network error
+      if (
+        error instanceof TypeError &&
+        error.message.includes("Failed to fetch")
+      ) {
+        console.warn(
+          "CORS or network error detected. Using fallback prediction.",
+        );
+      }
 
       // Fallback to local estimation if API fails
       let survivalProbability = 0.5;
@@ -164,7 +202,15 @@ export default function Index() {
       setPrediction(result);
     } catch (error) {
       console.error("Prediction error:", error);
-      alert("Error al hacer la predicción. Por favor, intenta de nuevo.");
+
+      // Check if it's a network/CORS error
+      const isNetworkError =
+        error instanceof TypeError && error.message.includes("Failed to fetch");
+      const errorMessage = isNetworkError
+        ? "No se pudo conectar con el servidor. Usando predicción local como respaldo."
+        : "Error al hacer la predicción. Por favor, intenta de nuevo.";
+
+      alert(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -399,10 +445,8 @@ export default function Index() {
                     <Input
                       id="age"
                       type="number"
-                      value={formData.age}
-                      onChange={(e) =>
-                        handleInputChange("age", parseFloat(e.target.value))
-                      }
+                      value={formData.age || ""}
+                      onChange={(e) => handleInputChange("age", e.target.value)}
                       min="0"
                       max="120"
                       className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600 text-gray-900 dark:text-white"
@@ -419,9 +463,9 @@ export default function Index() {
                     <Input
                       id="fare"
                       type="number"
-                      value={formData.fare}
+                      value={formData.fare || ""}
                       onChange={(e) =>
-                        handleInputChange("fare", parseFloat(e.target.value))
+                        handleInputChange("fare", e.target.value)
                       }
                       min="0"
                       step="0.01"
@@ -441,9 +485,9 @@ export default function Index() {
                     <Input
                       id="sibsp"
                       type="number"
-                      value={formData.sibsp}
+                      value={formData.sibsp || ""}
                       onChange={(e) =>
-                        handleInputChange("sibsp", parseInt(e.target.value))
+                        handleInputChange("sibsp", e.target.value)
                       }
                       min="0"
                       max="10"
@@ -461,9 +505,9 @@ export default function Index() {
                     <Input
                       id="parch"
                       type="number"
-                      value={formData.parch}
+                      value={formData.parch || ""}
                       onChange={(e) =>
-                        handleInputChange("parch", parseInt(e.target.value))
+                        handleInputChange("parch", e.target.value)
                       }
                       min="0"
                       max="10"
